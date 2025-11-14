@@ -1,0 +1,40 @@
+{
+  "name": "@fanart-tv/api",
+  "version": "1.0.0",
+  "description": "Official fanart.tv API client for Node.js - supports v3, v3.1, and v3.2 with client_key authentication",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
+  "scripts": {
+    "test": "node tests/test.js"
+  },
+  "keywords": [
+    "fanart",
+    "fanart.tv",
+    "api",
+    "movies",
+    "tv",
+    "music",
+    "images",
+    "artwork",
+    "posters",
+    "backgrounds"
+  ],
+  "author": "fanart.tv",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fanart-tv/fanart.tv-api"
+  },
+  "homepage": "https://api.fanart.tv",
+  "bugs": {
+    "url": "https://github.com/fanart-tv/fanart.tv-api/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "src/",
+    "README.md",
+    "LICENSE"
+  ]
+}
