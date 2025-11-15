@@ -20,13 +20,16 @@ jobs:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
 
-      - run: npm --version
-      
+      # Ensure npm 11.5.1 or later is installed
+      - name: Update npm
+        run: npm install -g npm@latest
+
       - run: npm ci
-      
+      - run: npm run build --if-present
+
       - name: Run tests
         run: npm test
         env:
           FANART_API_KEY: ${{ secrets.FANART_API_KEY }}
       
-      - run: npm publish --provenance --access public
+      - run: npm publish
