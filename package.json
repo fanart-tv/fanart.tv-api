@@ -23,7 +23,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/fanart-tv/fanart.tv-api"
+    "url": "git+https://github.com/fanart-tv/fanart.tv-api.git"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "homepage": "https://api.fanart.tv",
   "bugs": {
