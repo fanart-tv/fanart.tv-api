@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2025-11-15
+
+### Fixed
+- Corrected API version in albums array comment (v3.1+ not v3.2) in README Music Album Art example
+- Updated migration guide to specify `version: 'v3'` for true drop-in compatibility with older packages
+
+### Added
+- Discord community link (https://discord.gg/r9VufRk) in Support section
+- GitHub Actions workflow for automated npm publishing with provenance
+
 ## [1.0.0] - 2024-11-14
 
 ### Added

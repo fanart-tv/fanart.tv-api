@@ -276,10 +276,10 @@ console.log(`Found ${backgrounds.length} popular backgrounds`);
 async function getAlbumCovers(albumId) {
   const data = await client.getAlbum(albumId);
   
-  // In v3.2, albums is an array with release_group_id
+  // In v3.1+, albums is an array with release_group_id
   const album = Array.isArray(data.albums) 
     ? data.albums[0] 
-    : data.albums[albumId]; // v3/v3.1 format
+    : data.albums[albumId]; // v3 format
   
   return album?.albumcover || [];
 }
@@ -359,9 +359,9 @@ console.log(movie.image_count); // Type-safe!
 const FanartTvApi = require('fanart.tv-api');
 const fanart = new FanartTvApi({ apiKey: 'key' });
 
-// NEW
+// NEW - Use version: 'v3' for drop-in compatibility
 const FanartTVClient = require('@fanart-tv/api');
-const fanart = new FanartTVClient({ apiKey: 'key' });
+const fanart = new FanartTVClient({ apiKey: 'key', version: 'v3' });
 
 // All methods work the same!
 await fanart.getMovieImages(123);
@@ -374,9 +374,9 @@ await fanart.getMovieImages(123);
 const fanart = new(require('fanart.tv'))('your-api-key');
 await fanart.movies.get(123);
 
-// NEW
+// NEW - Use version: 'v3' for drop-in compatibility
 const FanartTVClient = require('@fanart-tv/api');
-const fanart = new FanartTVClient({ apiKey: 'your-api-key' });
+const fanart = new FanartTVClient({ apiKey: 'your-api-key', version: 'v3' });
 await fanart.getMovie(123);
 ```
 
@@ -396,5 +396,5 @@ MIT License - Copyright (c) 2024 fanart.tv
 
 For API support and questions:
 - Visit the [API documentation](https://api.fanart.tv)
-- Join the fanart.tv community
+- Join the [fanart.tv community on Discord](https://discord.gg/r9VufRk)
 - Report bugs on [GitHub Issues](https://github.com/fanart-tv/fanart.tv-api/issues)
