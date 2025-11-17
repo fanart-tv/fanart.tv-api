@@ -32,7 +32,7 @@ class FanartTVClient {
    * Make an API request
    * @private
    */
-  async _request(endpoint) {
+  async _request(endpoint, retryCount = 0) {
     const url = new URL(`${this.baseUrl}/${this.version}${endpoint}`);
     url.searchParams.append('api_key', this.apiKey);
     
@@ -41,6 +41,21 @@ class FanartTVClient {
     }
 
     const response = await fetch(url.toString());
+
+    // Handle rate limiting (429 Too Many Requests)
+    if (response.status === 429) {
+      const retryAfter = response.headers.get('Retry-After');
+      const waitTime = retryAfter ? parseInt(retryAfter) * 1000 : 1000; // Default 1 second
+      
+      // Retry up to 3 times
+      if (retryCount < 3) {
+        await new Promise(resolve => setTimeout(resolve, waitTime));
+        return this._request(endpoint, retryCount + 1);
+      }
+      
+      // Max retries exceeded
+      throw new Error(`fanart.tv API rate limit exceeded. Please wait ${waitTime/1000}s before retrying.`);
+    }
 
     if (!response.ok) {
       const errorText = await response.text();

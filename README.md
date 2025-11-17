@@ -15,6 +15,7 @@ A lightweight, zero-dependency Node.js client for the [fanart.tv API](https://ap
 - ✅ **TypeScript definitions** - Complete type safety out of the box
 - ✅ **Version flexibility** - Switch between v3, v3.1, and v3.2 easily
 - ✅ **Backward compatible** - Works as drop-in replacement for existing packages
+- ✅ **Automatic retry** - Handles 429 rate limits with exponential backoff
 
 ## Installation
 
@@ -216,6 +217,32 @@ Get your personal API key from your [fanart.tv account settings](https://fanart.
 | **VIP** | Active VIP membership | Real-time | Unlimited |
 
 Learn more at [https://api.fanart.tv](https://api.fanart.tv)
+
+## Rate Limiting
+
+The fanart.tv API may rate limit requests for API keys that exceed usage thresholds. This client automatically handles 429 rate limit responses:
+
+- **Automatic retry**: Retries up to 3 times when rate limited
+- **Respects Retry-After**: Waits the duration specified by the server
+- **Exponential backoff**: Uses 1 second default if no Retry-After header
+
+**Example error handling:**
+
+```javascript
+try {
+  const movie = await client.getMovie(17645);
+} catch (error) {
+  if (error.message.includes('rate limit exceeded')) {
+    console.log('Rate limited - the client already retried 3 times');
+    // Implement your own backoff strategy here
+  }
+}
+```
+
+Rate limits are applied per API key and vary based on usage patterns. Consider:
+- Using `client_key` for personal access (less restrictive)
+- Implementing request queuing for high-volume applications
+- Caching responses when appropriate
 
 ## Full Examples
 

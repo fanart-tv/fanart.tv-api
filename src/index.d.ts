@@ -13,6 +13,12 @@ export interface FanartTVClientOptions {
   baseUrl?: string;
 }
 
+export class RateLimitError extends Error {
+  /** Seconds to wait before retrying */
+  retryAfter: number;
+  constructor(message: string, retryAfter: number);
+}
+
 export interface FanartImage {
   /** Unique image ID */
   id: string;
