@@ -12,7 +12,7 @@ A lightweight, zero-dependency Node.js client for the [fanart.tv API](https://ap
 - ✅ **Zero dependencies** - Uses native `fetch` API (Node 18+)
 - ✅ **Full API v3.2 support** - Including `width`, `height`, and `image_count` fields
 - ✅ **Personal API keys** - Support for `client_key` for faster image updates
-- ✅ **TypeScript definitions** - Complete type safety out of the box
+- ✅ **TypeScript definitions** - Typed responses out of the box (open to new image types, so future additions work without a client update)
 - ✅ **Version flexibility** - Switch between v3, v3.1, and v3.2 easily
 - ✅ **Backward compatible** - Works as drop-in replacement for existing packages
 - ✅ **Automatic retry** - Handles 429 rate limits with exponential backoff
@@ -81,7 +81,8 @@ await client.getLatestMovies(1699920000);
 **Movie Response Fields:**
 - `hdmovielogo` - HD transparent movie logos
 - `movieposter` - Movie posters
-- `moviebackground` - Backgrounds/fanart
+- `moviebackground` - Backgrounds/fanart (1920x1080)
+- `movie4kbackground` - 4K backgrounds/fanart (3840x2160)
 - `hdmovieclearart` - HD clear art
 - `moviebanner` - Banners
 - `moviethumb` - Thumbnails
@@ -106,7 +107,8 @@ await client.getLatestShows(1699920000);
 - `hdtvlogo` - HD transparent TV logos
 - `clearlogo` - Clear logos
 - `hdclearart` - HD clear art
-- `showbackground` - Show backgrounds/fanart
+- `showbackground` - Show backgrounds/fanart (1920x1080)
+- `show4kbackground` - 4K show backgrounds/fanart (3840x2160)
 - `tvthumb` - Show thumbnails
 - `seasonposter` - Season posters
 - `seasonthumb` - Season thumbnails
@@ -134,7 +136,8 @@ await client.getLatestMusic(1699920000);
 ```
 
 **Music Response Fields:**
-- `artistbackground` - Artist backgrounds
+- `artistbackground` - Artist backgrounds (1920x1080)
+- `artist4kbackground` - 4K artist backgrounds (3840x2160)
 - `artistthumb` - Artist thumbnails
 - `musiclogo` - Music logos
 - `hdmusiclogo` - HD music logos
@@ -286,11 +289,11 @@ getMoviePosters(17645).then(posters => {
 ```javascript
 async function getShowBackgrounds(tvdbId, minLikes = 5) {
   const data = await client.getShow(tvdbId);
-  
-  // Get high-quality backgrounds with minimum likes
-  return data.showbackground
-    ?.filter(bg => parseInt(bg.likes) >= minLikes)
-    .sort((a, b) => parseInt(b.likes) - parseInt(a.likes)) || [];
+
+  // Combine standard and 4K backgrounds (newer shows may only have 4K)
+  return [...(data.showbackground || []), ...(data.show4kbackground || [])]
+    .filter(bg => parseInt(bg.likes) >= minLikes)
+    .sort((a, b) => parseInt(b.likes) - parseInt(a.likes));
 }
 
 const backgrounds = await getShowBackgrounds(121361, 10);

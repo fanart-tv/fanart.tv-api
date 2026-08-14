@@ -3,6 +3,22 @@
  * Supports API versions v3, v3.1, and v3.2
  * Uses native fetch - zero dependencies
  */
+
+/**
+ * Error thrown when the API rate limit is exceeded and retries are exhausted
+ */
+class RateLimitError extends Error {
+  /**
+   * @param {string} message - Error message
+   * @param {number} retryAfter - Seconds to wait before retrying
+   */
+  constructor(message, retryAfter) {
+    super(message);
+    this.name = 'RateLimitError';
+    this.retryAfter = retryAfter;
+  }
+}
+
 class FanartTVClient {
   /**
    * Create a new fanart.tv API client
@@ -54,7 +70,7 @@ class FanartTVClient {
       }
       
       // Max retries exceeded
-      throw new Error(`fanart.tv API rate limit exceeded. Please wait ${waitTime/1000}s before retrying.`);
+      throw new RateLimitError(`fanart.tv API rate limit exceeded. Please wait ${waitTime/1000}s before retrying.`, waitTime / 1000);
     }
 
     if (!response.ok) {
@@ -245,3 +261,5 @@ class FanartTVClient {
 }
 
 module.exports = FanartTVClient;
+// Named export so `import { RateLimitError }` and `require(...).RateLimitError` both work
+module.exports.RateLimitError = RateLimitError;

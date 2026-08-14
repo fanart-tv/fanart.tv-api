@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-08-14
+
+### Added
+- `movie4kbackground`, `show4kbackground`, and `artist4kbackground` (3840x2160) response fields, matching the image types now served by the API
+- Response interfaces now accept any image-type key, so new image types added by fanart.tv are usable without a client update
+- `RateLimitError` class (with `retryAfter` in seconds) is now actually thrown and exported when retries are exhausted, matching the existing type definitions
+- `npm run typecheck` script and a TypeScript devDependency to validate the shipped type definitions
+
+### Fixed
+- Removed the conflicting `export =` assignment that made `src/index.d.ts` fail to compile (TS2309) for TypeScript consumers
+- Corrected the documented default API version in the type definitions ('v3.2', not 'v3')
+
 ## [1.0.2] - 2025-11-17
 
 ### Added

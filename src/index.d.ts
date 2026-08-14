@@ -7,7 +7,7 @@ export interface FanartTVClientOptions {
   apiKey: string;
   /** Your personal client key for faster updates (optional) */
   clientKey?: string;
-  /** API version: 'v3', 'v3.1', or 'v3.2' (default: 'v3') */
+  /** API version: 'v3', 'v3.1', or 'v3.2' (default: 'v3.2') */
   version?: 'v3' | 'v3.1' | 'v3.2';
   /** Base API URL (default: 'https://webservice.fanart.tv') */
   baseUrl?: string;
@@ -44,7 +44,20 @@ export interface FanartImage {
   season?: string;
   /** Color identifier */
   colour?: string;
+  /** Image fields added by newer API versions are served without a client update */
+  [field: string]: string | undefined;
 }
+
+/**
+ * Value type for dynamic response keys. fanart.tv adds new image types
+ * server-side (e.g. movie4kbackground) and they are served without a client
+ * update, so the response interfaces accept any image-type key; the matching
+ * `<type>_count` keys (v3.2) are numbers.
+ */
+export type FanartDynamicValue = FanartImage[] | string | number | undefined;
+
+/** Albums field - object map keyed by release_group_id in v3/v3.1, array in v3.2 */
+export type AlbumsField = { [releaseGroupId: string]: AlbumData } | AlbumData[];
 
 export interface MovieResponse {
   /** Movie name */
@@ -69,10 +82,13 @@ export interface MovieResponse {
   movieart?: FanartImage[];
   /** Movie backgrounds */
   moviebackground?: FanartImage[];
+  /** 4K movie backgrounds */
+  movie4kbackground?: FanartImage[];
   /** Movie banners */
   moviebanner?: FanartImage[];
   /** Movie thumbs */
   moviethumb?: FanartImage[];
+  [imageType: string]: FanartDynamicValue;
 }
 
 export interface TVResponse {
@@ -90,6 +106,8 @@ export interface TVResponse {
   hdclearart?: FanartImage[];
   /** Show backgrounds */
   showbackground?: FanartImage[];
+  /** 4K show backgrounds */
+  show4kbackground?: FanartImage[];
   /** TV thumbs */
   tvthumb?: FanartImage[];
   /** Season posters */
@@ -102,6 +120,7 @@ export interface TVResponse {
   characterart?: FanartImage[];
   /** Season banners */
   seasonbanner?: FanartImage[];
+  [imageType: string]: FanartDynamicValue;
 }
 
 export interface AlbumData {
@@ -111,6 +130,8 @@ export interface AlbumData {
   cdart?: FanartImage[];
   /** Album covers */
   albumcover?: FanartImage[];
+  /** New album image types are served without a client update */
+  [imageType: string]: FanartImage[] | string | undefined;
 }
 
 export interface MusicResponse {
@@ -122,6 +143,8 @@ export interface MusicResponse {
   image_count?: number;
   /** Artist backgrounds */
   artistbackground?: FanartImage[];
+  /** 4K artist backgrounds */
+  artist4kbackground?: FanartImage[];
   /** Artist thumbs */
   artistthumb?: FanartImage[];
   /** Music logos */
@@ -131,7 +154,8 @@ export interface MusicResponse {
   /** Music banners */
   musicbanner?: FanartImage[];
   /** Albums - object map in v3/v3.1, array in v3.2 */
-  albums?: { [key: string]: AlbumData } | AlbumData[];
+  albums?: AlbumsField;
+  [imageType: string]: FanartDynamicValue | AlbumsField;
 }
 
 export interface LabelResponse {
@@ -141,6 +165,7 @@ export interface LabelResponse {
   id: string;
   /** Label logos */
   musiclabel?: FanartImage[];
+  [imageType: string]: FanartDynamicValue;
 }
 
 export interface LatestItem {
@@ -191,5 +216,3 @@ export default class FanartTVClient {
   setVersion(version: 'v3' | 'v3.1' | 'v3.2'): void;
   setClientKey(clientKey: string): void;
 }
-
-export = FanartTVClient;
