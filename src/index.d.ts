@@ -2,6 +2,17 @@
  * Official fanart.tv API Client TypeScript Definitions
  */
 
+/**
+ * Image sizes served by the fanart.tv asset CDN.
+ * - 'full': the original upload (the `/fanart/` URL the API returns)
+ * - 'preview': thumbnail scaled down to a maximum of 200px (`/preview/`)
+ * - 'bigpreview': thumbnail scaled down to a maximum of 400px (`/bigpreview/`)
+ */
+export type FanartImageSize = 'full' | 'preview' | 'bigpreview';
+
+/** All supported image sizes */
+export const IMAGE_SIZES: readonly FanartImageSize[];
+
 export interface FanartTVClientOptions {
   /** Your fanart.tv API key (required) */
   apiKey: string;
@@ -11,6 +22,8 @@ export interface FanartTVClientOptions {
   version?: 'v3' | 'v3.1' | 'v3.2';
   /** Base API URL (default: 'https://webservice.fanart.tv') */
   baseUrl?: string;
+  /** Size of image URLs to return in responses (default: 'full') */
+  imageSize?: FanartImageSize;
 }
 
 export class RateLimitError extends Error {
@@ -22,7 +35,10 @@ export class RateLimitError extends Error {
 export interface FanartImage {
   /** Unique image ID */
   id: string;
-  /** Full image URL */
+  /**
+   * Image URL. Full-size by default; a preview URL when the client's `imageSize`
+   * is 'preview' or 'bigpreview'. Use FanartTVClient.imageUrl() to convert between sizes.
+   */
   url: string;
   /** Language code (e.g., 'en', 'pt', '00' for language-free) */
   lang: string;
@@ -190,6 +206,16 @@ export interface LatestItem {
 export default class FanartTVClient {
   constructor(options: FanartTVClientOptions);
 
+  // Image URL helpers (static - no API request is made)
+  /** Convert an image URL to the given size (default 'preview'); non-fanart.tv URLs are returned unchanged */
+  static imageUrl(url: string, size?: FanartImageSize): string;
+  /** Get the small preview (max 200px) URL for an image */
+  static previewUrl(url: string): string;
+  /** Get the large preview (max 400px) URL for an image */
+  static bigPreviewUrl(url: string): string;
+  /** Get the full-size URL for an image (reverses previewUrl/bigPreviewUrl) */
+  static fullUrl(url: string): string;
+
   // Movie methods
   getMovie(movieId: string | number): Promise<MovieResponse>;
   getMovieImages(movieId: string | number): Promise<MovieResponse>;
@@ -215,4 +241,5 @@ export default class FanartTVClient {
   // Configuration methods
   setVersion(version: 'v3' | 'v3.1' | 'v3.2'): void;
   setClientKey(clientKey: string): void;
+  setImageSize(size: FanartImageSize): void;
 }

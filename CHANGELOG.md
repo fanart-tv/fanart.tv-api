@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-09-05
+
+### Added
+- `imageSize` constructor option and `setImageSize()` method. Set it to `'preview'` (max 200px) or `'bigpreview'` (max 400px) to have every image `url` in a response rewritten to the CDN's pre-generated thumbnail instead of the full-size file. Defaults to `'full'`, so existing behaviour is unchanged
+- Static URL helpers `FanartTVClient.imageUrl(url, size)`, `previewUrl(url)`, `bigPreviewUrl(url)` and `fullUrl(url)` for converting individual image URLs between sizes without an API request
+- `IMAGE_SIZES` export and `FanartImageSize` type
+- Offline test suite for the image size helpers (`tests/image-size-test.js`, runs as part of `npm test`)
+
 ## [1.1.0] - 2026-08-14
 
 ### Added

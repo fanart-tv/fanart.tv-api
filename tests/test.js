@@ -113,6 +113,19 @@ async function runTests() {
     console.log(`❌ Error: ${error.message}`);
   }
 
+  // Test 9: Image size option
+  console.log('\nTest 9: Image size option (preview URLs)...');
+  try {
+    client.setImageSize('preview');
+    const movie = await client.getMovie(17645);
+    client.setImageSize('full');
+    const url = movie.movieposter?.[0]?.url || '';
+    console.log(`✅ preview urls: ${url.includes('/preview/') ? 'Correct' : 'Incorrect'} (${url})`);
+    console.log(`   full url via helper: ${FanartTVClient.fullUrl(url)}`);
+  } catch (error) {
+    console.log(`❌ Error: ${error.message}`);
+  }
+
   console.log('\n✅ All tests completed!');
 }
 

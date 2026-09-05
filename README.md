@@ -16,6 +16,7 @@ A lightweight, zero-dependency Node.js client for the [fanart.tv API](https://ap
 - ✅ **Version flexibility** - Switch between v3, v3.1, and v3.2 easily
 - ✅ **Backward compatible** - Works as drop-in replacement for existing packages
 - ✅ **Automatic retry** - Handles 429 rate limits with exponential backoff
+- ✅ **Image previews** - Return 200px or 400px thumbnail URLs instead of full-size images
 
 ## Installation
 
@@ -58,7 +59,8 @@ const client = new FanartTVClient({
   apiKey: 'your-api-key',        // Required: Your fanart.tv API key
   clientKey: 'your-client-key',  // Optional: Personal key for faster updates
   version: 'v3.2',               // Optional: 'v3', 'v3.1', or 'v3.2' (default: 'v3.2')
-  baseUrl: 'https://...'         // Optional: Custom base URL
+  baseUrl: 'https://...',        // Optional: Custom base URL
+  imageSize: 'full'              // Optional: 'full', 'preview' (200px), or 'bigpreview' (400px)
 });
 ```
 
@@ -194,6 +196,48 @@ Adds image dimensions and total count:
 client.setVersion('v3.2');
 const images = await client.getMovie(17645); // Now includes width/height
 ```
+
+## Image Previews
+
+The API always returns full-size image URLs, but the fanart.tv CDN also serves two smaller, pre-generated versions of every image. They use the same URL with the `/fanart/` path segment swapped for `/preview/` or `/bigpreview/`:
+
+| Size | Path segment | Description |
+|------|--------------|-------------|
+| `full` | `/fanart/` | Original upload (default) |
+| `preview` | `/preview/` | Thumbnail scaled down to a maximum of 200px |
+| `bigpreview` | `/bigpreview/` | Thumbnail scaled down to a maximum of 400px |
+
+Previews are dramatically smaller (a 1000x1000 album cover goes from ~915 KB to ~18 KB as a `bigpreview` and ~6 KB as a `preview`), so use them for grids and pickers and load the full-size image only once the user has chosen one.
+
+**Return preview URLs from every request:**
+
+```javascript
+const client = new FanartTVClient({
+  apiKey: 'your-api-key',
+  imageSize: 'preview' // every image url in responses now points at the 200px thumbnail
+});
+
+const movie = await client.getMovie(17645);
+console.log(movie.movieposter[0].url);
+// https://assets.fanart.tv/preview/leave-her-to-heaven-5d557fb845928.png
+
+// Switch at runtime
+client.setImageSize('bigpreview');
+client.setImageSize('full');
+```
+
+**Convert individual URLs without changing the client:**
+
+```javascript
+const url = movie.movieposter[0].url; // full-size url from the API
+
+FanartTVClient.previewUrl(url);          // https://assets.fanart.tv/preview/leave-her-to-heaven-5d557fb845928.png
+FanartTVClient.bigPreviewUrl(url);       // https://assets.fanart.tv/bigpreview/leave-her-to-heaven-5d557fb845928.png
+FanartTVClient.imageUrl(url, 'preview'); // same as previewUrl()
+FanartTVClient.fullUrl(FanartTVClient.previewUrl(url)); // back to https://assets.fanart.tv/fanart/leave-her-to-heaven-5d557fb845928.png
+```
+
+Note that the `width` and `height` fields returned by v3.2 always describe the full-size image, even when `imageSize` is set to a preview.
 
 ## Personal API Keys (client_key)
 

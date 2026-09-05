@@ -1,11 +1,11 @@
 {
   "name": "@fanart-tv/api",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Official fanart.tv API client for Node.js - supports v3, v3.1, and v3.2 with client_key authentication",
   "main": "src/index.js",
   "types": "src/index.d.ts",
   "scripts": {
-    "test": "npm run typecheck && node tests/test.js",
+    "test": "npm run typecheck && node tests/image-size-test.js && node tests/test.js",
     "typecheck": "tsc --noEmit --strict src/index.d.ts"
   },
   "devDependencies": {
